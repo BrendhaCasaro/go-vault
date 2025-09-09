@@ -17,7 +17,11 @@ func main() {
 		reader := bufio.NewReader(os.Stdin)
 
 		fmt.Print("Digite algo:\n")
-		inputText, _ := reader.ReadString('\n')
+		inputText, err := reader.ReadString('\n')
+		if err != nil {
+			fmt.Println("Have a error to get the input: ", err)
+			return
+		}
 
 		Parse(inputText)
 	}
