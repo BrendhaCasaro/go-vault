@@ -1,28 +1,13 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
-	"os"
 	"strings"
+
+	"github.com/BrendhaCasaro/go-vault/internal/action"
 )
 
-func Parse(text string) {
-	text = strings.TrimSpace(text)
-	fmt.Printf("Texto digitado: %v\n\n", text)
-}
-
 func main() {
-	for {
-		reader := bufio.NewReader(os.Stdin)
+	r := strings.NewReader("blabla \r\n")
 
-		fmt.Print("Digite algo:\n")
-		inputText, err := reader.ReadString('\n')
-		if err != nil {
-			fmt.Println("Have a error to get the input: ", err)
-			return
-		}
-
-		Parse(inputText)
-	}
+	action.ActionFromReader(r)
 }

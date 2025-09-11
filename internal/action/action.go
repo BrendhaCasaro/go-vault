@@ -1,6 +1,8 @@
 package action
 
 import (
+	"bytes"
+	"fmt"
 	"io"
 )
 
@@ -18,7 +20,11 @@ type Action struct {
 }
 
 func ActionFromReader(reader io.Reader) (*Action, error) {
-	parse, err := parseAction(reader)
+	buf, err := io.ReadAll(reader)
+	if err != nil {
+		return nil, err
+	}
+	parse, err := parseAction(buf)
 	if err != nil {
 		return nil, err
 	}
@@ -26,6 +32,10 @@ func ActionFromReader(reader io.Reader) (*Action, error) {
 	return parse, nil
 }
 
-func parseAction(content string) (*Action, error) {
+func parseAction(content []byte) (*Action, error) {
+	index := bytes.Index(content, []byte("\r\n"))
+
+	fmt.Print(index)
+
 	return nil, nil
 }
