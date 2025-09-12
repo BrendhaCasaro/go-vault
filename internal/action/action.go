@@ -9,9 +9,9 @@ import (
 type Actions int
 
 const (
-	Get Actions = iota
-	Put
-	Delete
+	GET Actions = iota
+	PUT
+	DELETE
 )
 
 type Action struct {
@@ -33,9 +33,22 @@ func ActionFromReader(reader io.Reader) (*Action, error) {
 }
 
 func parseAction(content []byte) (*Action, error) {
-	index := bytes.Index(content, []byte("\r\n"))
+	endComand := bytes.Index(content, []byte("\r\n"))
 
-	fmt.Print(index)
+	splitedComand := bytes.Split(content, []byte(" "))
+	_, comand, found := bytes.Cut(content, content[endComand:endComand+3])
 
+	fmt.Printf("%v\n", comand)
+	fmt.Printf("%v\n", found)
+
+	fmt.Printf("%v\n", endComand)
+	fmt.Printf("%q", splitedComand)
+
+	// switch string(splitedComand[0]) {
+	// case "GET":
+	// 	return &Action{
+	// 		GET,
+	// 	}
+	// }
 	return nil, nil
 }
