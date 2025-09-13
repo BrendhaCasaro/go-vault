@@ -6,16 +6,17 @@ import (
 	"io"
 )
 
-type Actions int
+type ActionType int
 
 const (
-	GET Actions = iota
+	NULL ActionType = iota
+	GET
 	PUT
 	DELETE
 )
 
 type Action struct {
-	Type Actions
+	Type ActionType
 	Args []string
 }
 
@@ -33,10 +34,6 @@ func ActionFromReader(reader io.Reader) (*Action, error) {
 }
 
 func parseAction(content []byte) (*Action, error) {
-	if len(content) == 0 {
-		return nil, errors.New("Empty comand")
-	}
-
 	index := bytes.Index(content, []byte("\r\n"))
 	if index == -1 {
 		return nil, errors.New("Missing the CRFL'\r\n'")
@@ -46,7 +43,7 @@ func parseAction(content []byte) (*Action, error) {
 	comandFields := bytes.Split(content, []byte(" "))
 
 	actionType := parseActionType(string(comandFields[0]))
-	if actionType == -1 {
+	if actionType == NULL {
 		return nil, errors.New("Invalid action")
 	}
 
@@ -64,7 +61,7 @@ func parseAction(content []byte) (*Action, error) {
 	}, nil
 }
 
-func parseActionType(actionType string) Actions {
+func parseActionType(actionType string) ActionType {
 	switch actionType {
 	case "GET":
 		return GET
@@ -73,6 +70,6 @@ func parseActionType(actionType string) Actions {
 	case "DELETE":
 		return DELETE
 	default:
-		return -1
+		return NULL
 	}
 }
