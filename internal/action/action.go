@@ -2,7 +2,6 @@ package action
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 )
 
@@ -33,22 +32,36 @@ func ActionFromReader(reader io.Reader) (*Action, error) {
 }
 
 func parseAction(content []byte) (*Action, error) {
-	endComand := bytes.Index(content, []byte("\r\n"))
+	comand, _, _ := bytes.Cut(content, []byte("\r\n"))
 
-	splitedComand := bytes.Split(content, []byte(" "))
-	_, comand, found := bytes.Cut(content, content[endComand:endComand+3])
+	splitedComand := bytes.Split(comand, []byte(" "))
 
-	fmt.Printf("%v\n", comand)
-	fmt.Printf("%v\n", found)
+	argsComand := make([]string, len(splitedComand[1:]))
 
-	fmt.Printf("%v\n", endComand)
-	fmt.Printf("%q", splitedComand)
+	for i, a := range splitedComand[1:] {
+		argsComand[i] = string(a)
+	}
 
-	// switch string(splitedComand[0]) {
-	// case "GET":
-	// 	return &Action{
-	// 		GET,
-	// 	}
-	// }
+	switch string(splitedComand[0]) {
+	case "GET":
+		return &Action{
+			GET,
+			argsComand,
+		}, nil
+	case "PUT":
+		return &Action{
+			PUT,
+			argsComand,
+		}, nil
+	case "DELETE":
+		return &Action{
+			DELETE,
+			argsComand,
+		}, nil
+	}
+
 	return nil, nil
+}
+
+func typeFromString(actionType string) {
 }

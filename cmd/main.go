@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	r := strings.NewReader("Get my_key\r\n")
+	r := strings.NewReader("Get my_key blabla\r\n")
 
 	action.ActionFromReader(r)
 }
