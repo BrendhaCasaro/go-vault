@@ -1,6 +1,7 @@
 package action
 
 import (
+	"bufio"
 	"bytes"
 	"errors"
 	"io"
@@ -21,25 +22,14 @@ type Action struct {
 }
 
 func ActionFromReader(reader io.Reader) (*Action, error) {
-	buf, err := io.ReadAll(reader)
-	if err != nil {
-		return nil, err
-	}
-	parse, err := parseAction(buf)
-	if err != nil {
-		return nil, err
-	}
+	scanner := bufio.NewScanner(reader)
+	scanner.Split(scanCRLF)
+	scanner.Scan()
 
-	return parse, nil
+	return parseAction(scanner.Bytes())
 }
 
 func parseAction(content []byte) (*Action, error) {
-	index := bytes.Index(content, []byte("\r\n"))
-	if index == -1 {
-		return nil, errors.New("Missing the CRFL'\r\n'")
-	}
-	content = content[:index]
-
 	comandFields := bytes.Split(content, []byte(" "))
 
 	actionType := parseActionType(string(comandFields[0]))
