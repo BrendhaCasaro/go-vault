@@ -1,5 +1,7 @@
 package cache
 
+import "errors"
+
 type LRUCache struct {
 	capacity int
 	items    map[string]*node
@@ -14,48 +16,72 @@ type node struct {
 	prev  *node
 }
 
-func newNode(key string, value string) *node {
+func NewNode(key string, value string) *node {
 	return &node{
 		key:   key,
 		value: value,
 	}
 }
 
-func newLRUCache(capacity int) *LRUCache {
-	return &LRUCache{
+func NewLRUCache(capacity int) *LRUCache {
+	lru := &LRUCache{
 		capacity: capacity,
 		items:    make(map[string]*node),
-		left:     newNode("", ""),
-		right:    newNode("", ""),
+		left:     NewNode("", ""),
+		right:    NewNode("", ""),
 	}
+
+	lru.left.next, lru.right.prev = lru.right, lru.left
+
+	return lru
 }
 
-func (lru *LRUCache) insert(node *node) {}
+func (lru *LRUCache) insert(node *node) {
+	l, r := lru.right.prev, lru.right
+
+	r.prev, l.next = node, node
+	node.next, node.prev = r, l
+}
+
 func (lru *LRUCache) remove(node *node) {
 	prev, next := node.prev, node.next
+
+	prev.next, next.prev = next, prev
 }
 
-func (lru *LRUCache) get(key string) string {
+func (lru *LRUCache) Get(key string) (string, bool) {
 	if node, ok := lru.items[key]; ok {
+		lru.remove(node)
 		lru.insert(node)
-		return node.value
+		return node.value, true
 	}
 
-	return ""
+	return "", false
 }
 
-func (lru *LRUCache) put(key string, value string) {
+func (lru *LRUCache) Put(key string, value string) {
 	if node, ok := lru.items[key]; ok {
 		lru.remove(node)
 	}
 
-	node := newNode(key, value)
+	node := NewNode(key, value)
 	lru.items[key] = node
 	lru.insert(node)
 
-	if len(lru.items) == lru.capacity {
-		least := lru.left
+	if len(lru.items) > lru.capacity {
+		least := lru.left.next
 		lru.remove(least)
 		delete(lru.items, least.key)
 	}
+}
+
+func (lru *LRUCache) Delete(key string) error {
+	if node, ok := lru.items[key]; ok {
+		delete(lru.items, key)
+		lru.remove(node)
+		node = nil
+		return nil
+	}
+
+	return errors.New("Error: provided key does not exist")
 }
