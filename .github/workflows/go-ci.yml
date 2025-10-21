@@ -1,0 +1,42 @@
+name: Go CI
+
+on:
+  push:        # executa em TODO push, de qualquer branch
+    branches: ["*"]
+
+jobs:
+  build-test:
+    name: Run Tests and Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Check code formatting
+        run: |
+          fmt_output=$(go fmt ./...)
+          if [ -n "$fmt_output" ]; then
+            echo "⚠️ Some files are not formatted properly:"
+            echo "$fmt_output"
+            echo "Please run 'go fmt ./...' locally before committing."
+            exit 1
+          fi
+          echo "✅ Code is properly formatted."
+
+      - name: Run go vet (static analysis)
+        run: |
+          echo "🔍 Running go vet..."
+          go vet ./...
+
+      - name: Run tests
+        run: |
+          echo "🧪 Running tests..."
+          go test -v ./...
+
