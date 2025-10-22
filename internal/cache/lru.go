@@ -23,7 +23,7 @@ func NewNode(key string, value string) *node {
 	}
 }
 
-func NewLRUCache(capacity int) *LRUCache {
+func NewLRUCache(capacity int) Cache {
 	lru := &LRUCache{
 		capacity: capacity,
 		items:    make(map[string]*node),
@@ -53,13 +53,13 @@ func (lru *LRUCache) Get(key string) (string, bool) {
 	if node, ok := lru.items[key]; ok {
 		lru.remove(node)
 		lru.insert(node)
-		return node.value, true
+		return node.value, ok
 	}
 
 	return "", false
 }
 
-func (lru *LRUCache) Put(key string, value string) {
+func (lru *LRUCache) Put(key string, value string) error {
 	if node, ok := lru.items[key]; ok {
 		lru.remove(node)
 	}
@@ -73,6 +73,8 @@ func (lru *LRUCache) Put(key string, value string) {
 		lru.remove(least)
 		delete(lru.items, least.key)
 	}
+
+	return nil
 }
 
 func (lru *LRUCache) Delete(key string) error {
