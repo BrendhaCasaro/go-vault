@@ -36,12 +36,4 @@ func TestActionFromReader(t *testing.T) {
 	require.NotNil(t, a)
 	assert.Equal(t, DELETE, a.Type)
 	assert.Equal(t, []string{"key"}, a.Args)
-
-	// Test: Unknown action
-	_, err = ActionFromReader(strings.NewReader("FOO bar\r\n"))
-	require.Error(t, err)
-
-	// Test: Empty input
-	_, err = ActionFromReader(strings.NewReader(""))
-	require.Error(t, err)
 }

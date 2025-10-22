@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewLRUCache(t *testing.T) {
-	lru := NewLRUCache(2)
+	lru := NewLRUCache(2).(*LRUCache)
 	require.NotNil(t, lru)
 	assert.Equal(t, 2, lru.capacity)
 	assert.NotNil(t, lru.items)
