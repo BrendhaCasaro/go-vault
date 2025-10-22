@@ -5,14 +5,18 @@ import (
 	"strings"
 
 	"github.com/BrendhaCasaro/go-vault/internal/action"
+	"github.com/BrendhaCasaro/go-vault/internal/cache"
 )
 
 func main() {
-	r := strings.NewReader("DELETE my_key blabla blabla2\r\n")
+	lru := cache.NewLRUCache(5)
 
-	action, err := action.ActionFromReader(r)
+	r := strings.NewReader("PUT my_key blabla blabla2\r\n")
+
+	ac, err := action.ActionFromReader(r)
 	if err != nil {
-		fmt.Printf("%v", err)
+		fmt.Printf("%s", err)
 	}
-	fmt.Printf("%v", action)
+
+	action.ExecuteAction(ac, lru)
 }
