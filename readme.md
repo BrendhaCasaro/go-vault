@@ -1,0 +1,1 @@
+A small, lightweight secret/key-value vault server written in Go. Go-vault provides a minimal TCP-based protocol for storing, with LRU cache algorithm, retrieving and managing string secrets. It's intended as a learning / demo project for building simple networked services in Go and for the implemente the LRU cache.
