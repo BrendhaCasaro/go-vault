@@ -34,7 +34,7 @@ func parseAction(content []byte) (*Action, error) {
 
 	actionType := parseActionType(string(comandFields[0]))
 	if actionType == NULL {
-		return nil, errors.New("Invalid action")
+		return nil, nil
 	}
 
 	args := make([]string, len(comandFields[1:]))

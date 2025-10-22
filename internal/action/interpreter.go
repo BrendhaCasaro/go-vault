@@ -15,9 +15,9 @@ func ExecuteAction(comand *Action, c cache.Cache) (string, error) {
 		}
 		key := comand.Args[0]
 
-		node, ok := c.Get(key)
+		value, ok := c.Get(key)
 		if ok {
-			return node, nil
+			return value, nil
 		}
 
 		return "", errors.New("Value searched not exist")
